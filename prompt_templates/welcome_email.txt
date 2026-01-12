@@ -1,0 +1,13 @@
+Hello {{first_name}},
+
+Welcome to {{course_name}}!
+
+We’re excited to have you join us. This course is designed to help you build confidence and practical skills through clear explanations, hands-on examples, and real-world scenarios.
+
+Please take a moment to explore the course materials and get familiar with the learning environment. If you have questions along the way, support is always available.
+
+Tone guidance for the model:
+Write in a {{tone}} style. Avoid marketing language. Be clear, friendly, and professional.
+
+Best regards,  
+The Pixel Learning Team
