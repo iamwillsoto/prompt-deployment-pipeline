@@ -1,0 +1,9 @@
+.terraform/
+
+*.tfstate*
+
+outputs/*.html
+
+outputs/*.md
+
+__pycache__/
