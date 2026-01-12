@@ -12,6 +12,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug repo structure (diagnostic)
+        run: |
+          echo "PWD:"
+          pwd
+          echo "Top-level files:"
+          ls -la
+          echo "Scripts:"
+          ls -la scripts || true
+          echo "Prompts:"
+          ls -la prompts || true
+          echo "Templates:"
+          ls -la prompt_templates || true
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -20,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r ./requirements.txt
 
       - name: Generate + publish (prod)
         env:
@@ -30,4 +43,4 @@ jobs:
           S3_BUCKET_BETA: ${{ secrets.S3_BUCKET_BETA }}
           S3_BUCKET_PROD: ${{ secrets.S3_BUCKET_PROD }}
         run: |
-          python scripts/process_prompt.py --env prod --config prompts/welcome_prompt.json --dry-run
+          python ./scripts/process_prompt.py --env prod --config ./prompts/welcome_prompt.json --dry-run
