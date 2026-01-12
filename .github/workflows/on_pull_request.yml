@@ -1,0 +1,33 @@
+name: PR → Beta (Prompt Publish)
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  publish_beta:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate + publish (beta)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET_BETA: ${{ secrets.S3_BUCKET_BETA }}
+          S3_BUCKET_PROD: ${{ secrets.S3_BUCKET_PROD }}
+        run: |
+          python scripts/process_prompt.py --env beta --config prompts/welcome_prompt.json --dry-run
