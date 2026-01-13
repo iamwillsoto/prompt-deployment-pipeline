@@ -1,27 +1,23 @@
 variable "env" {
-  description = "Deployment environment: beta or prod"
+  description = "Deployment environment (beta or prod)"
   type        = string
+
   validation {
     condition     = contains(["beta", "prod"], var.env)
-    error_message = "env must be beta or prod"
+    error_message = "env must be 'beta' or 'prod'."
   }
 }
 
 variable "aws_region" {
-  description = "Region for Lambda/S3/SFN/API resources"
+  description = "Region for core infra (S3/Lambda/APIGW/SFN)"
   type        = string
   default     = "us-east-1"
 }
 
 variable "bedrock_region" {
-  description = "Region for Bedrock runtime (often us-west-2)"
+  description = "Bedrock region"
   type        = string
   default     = "us-west-2"
-}
-
-variable "owner_suffix" {
-  description = "Uniqueness suffix used in bucket name (e.g., iamwillsoto)"
-  type        = string
 }
 
 variable "bedrock_model_id" {
@@ -30,8 +26,20 @@ variable "bedrock_model_id" {
   default     = "anthropic.claude-3-sonnet-20240229-v1:0"
 }
 
-variable "outputs_ttl_days" {
-  description = "Days until outputs expire"
+variable "bedrock_max_retries" {
+  description = "Max retries for Bedrock invoke"
+  type        = number
+  default     = 6
+}
+
+variable "bedrock_base_delay_seconds" {
+  description = "Base delay for Bedrock retry backoff"
+  type        = number
+  default     = 1.5
+}
+
+variable "outputs_retention_days" {
+  description = "Expire outputs after N days (0 disables lifecycle rule)"
   type        = number
   default     = 30
 }
