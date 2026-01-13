@@ -71,9 +71,10 @@ prompt_templates/               # Prompt templates
 prompts/                        # Sample prompt configs
 validation-screenshots/         # Execution proof screenshots
 ```
+---
 
-### Environments
-## Beta
+## Environments
+### Beta
 
 Deployed via Pull Requests
 
@@ -81,7 +82,7 @@ Outputs written to:
 ```
 beta/outputs/
 ```
-## Prod
+### Prod
 
 Deployed via merges to main
 
@@ -89,8 +90,9 @@ Outputs written to:
 ```
 prod/outputs/
 ```
+---
 
-### Environment Resolution
+## Environment Resolution
 
 Environment selection is derived from:
 
@@ -99,40 +101,44 @@ Filename convention (beta-*.json, prod-*.json)
 S3 object metadata (env=beta|prod)
 
 Fallback to DEFAULT_ENV
+---
 
-### Deploy (Terraform)
-## Local Deployment
+## Deploy (Terraform)
+### Local Deployment
 
 From the infra/ directory:
 ```
 terraform init
 terraform apply
 ```
+---
 
-## Key Inputs
+### Key Inputs
 ```
 env                = beta | prod
 bucket_name        = <environment-specific bucket>
 bedrock_region     = us-east-1
 bedrock_model_id   = <model-id>
 ```
+---
 
-### CI/CD
-## PR → Beta
+## CI/CD
+### PR → Beta
 
 Deploys infrastructure changes to beta
 
 Publishes prompt configs for validation
 
-## Merge → Prod
+### Merge → Prod
 
 Deploys infrastructure changes to prod
 
 Publishes final rendered outputs
 
 This enforces controlled promotion: only reviewed changes reach production.
+---
 
-### Validation Artifacts
+## Validation Artifacts
 
 Recommended high-signal proof screenshots included in validation-screenshots/:
 
@@ -145,7 +151,8 @@ Step Functions execution graph
 S3 prod/outputs/ listing
 
 CloudWatch logs showing event-triggered execution
+---
 
-### Summary
+## Summary
 
 This project demonstrates production-grade Infrastructure as Code, event-driven serverless design, secure IAM practices, and disciplined environment promotion for AI-backed workloads on AWS.
