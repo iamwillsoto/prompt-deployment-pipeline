@@ -1,85 +1,92 @@
-Prompt Deployment Pipeline (Beta → Prod)
-Terraform + Event-Driven Amazon Bedrock Rendering
+# Prompt Deployment Pipeline (Beta → Prod)
 
-A Terraform-managed prompt deployment platform that converts JSON prompt configurations into rendered HTML/Markdown outputs using an event-driven AWS architecture. Prompt configs are uploaded to Amazon S3, processed by AWS Lambda, optionally invoked through Amazon Bedrock, and published to environment-scoped prefixes (beta/ and prod/). CI/CD enforces strict PR → Beta and Merge → Prod promotion.
+## Terraform + Event-Driven Amazon Bedrock Rendering
 
-Outcomes
+A production-oriented prompt deployment platform built on AWS and fully managed with Terraform. This system converts JSON prompt configurations into rendered HTML/Markdown outputs using an event-driven serverless architecture, with strict **Beta → Prod** promotion enforced via CI/CD.
 
-Environment isolation
-Beta and Prod are separated via strict S3 prefixes and least-privilege IAM scoping.
+Prompt configurations are uploaded to Amazon S3, processed by AWS Lambda, optionally invoked through Amazon Bedrock, and published to environment-scoped prefixes (`beta/` and `prod/`). Infrastructure, permissions, and orchestration are defined entirely as code.
 
-Event-driven execution
-S3 ObjectCreated:Put events automatically trigger prompt processing.
+---
 
-Model-backed generation
-Lambda invokes Amazon Bedrock (InvokeModel) to generate AI-backed content.
+## Outcomes
 
-Infrastructure as Code
-All resources (S3, Lambda, IAM, Step Functions, API Gateway) are defined and managed in Terraform.
+### Environment Isolation
+Beta and Prod environments are isolated using strict S3 prefixes and least-privilege IAM boundaries.
 
-Secure by default
-IAM policies are scoped to required bucket paths and specific Bedrock model ARNs.
+### Event-Driven Execution
+S3 `ObjectCreated:Put` events automatically trigger prompt processing without manual invocation.
 
-Promotion discipline
-Pull Requests deploy to beta; merges to main deploy to prod.
+### Model-Backed Generation
+Lambda invokes Amazon Bedrock (`InvokeModel`) to generate AI-backed content.
 
-Architecture (High Level)
+### Infrastructure as Code
+All resources (S3, Lambda, IAM, Step Functions, API Gateway) are provisioned and managed via Terraform.
 
-A developer uploads a prompt config JSON to:
+### Promotion Discipline
+Pull Requests deploy to **beta**; merges to `main` deploy to **prod**, ensuring only reviewed changes reach production.
+
+---
+
+## Architecture (High Level)
+
+### End-to-End Flow
+
+1. A developer uploads a prompt config JSON to:
 s3://<env-bucket>/prompt_inputs/
 
-An S3 event notification triggers the environment-specific Lambda entrypoint.
+2. An S3 event notification triggers the environment-specific **starter** Lambda.
 
-Lambda:
+3. The starter Lambda initiates a Step Functions execution.
 
-Fetches the prompt config and template from S3
+4. Step Functions orchestrates the following stages:
+- Render prompt from template
+- Invoke Amazon Bedrock
+- Publish rendered output
 
-Renders the final prompt using variables
-
-Invokes Amazon Bedrock (Claude / Titan)
-
-Writes the output to:
+5. Final artifacts are written to:
 s3://<env-bucket>/<env>/outputs/<slug>.(html|md)
 
-Optional workflow
-Step Functions orchestrates render → invoke → publish with retries and error handling.
+6. *(Optional)* API Gateway exposes list, preview, and regenerate endpoints.
 
-Optional API
-API Gateway exposes list, preview, and regenerate endpoints.
+---
 
-Repository Layout
+## Repository Layout
 
-infra/                  # Terraform IaC
-  main.tf
-  variables.tf
-  versions.tf
-  outputs.tf
-  stepfunctions.asl.json.tftpl
+```text
+infra/                          # Terraform IaC
+main.tf
+variables.tf
+versions.tf
+outputs.tf
+stepfunctions.asl.json.tftpl
 
-lambdas/                # Lambda sources (packaged by Terraform)
-  starter.py            # S3 trigger entrypoint
-  render.py             # Template rendering utilities
-  invoke_bedrock.py     # Bedrock client + retries
-  publish.py            # Writes outputs to S3
-  api.py                # Optional API routes
+lambdas/                        # Lambda sources (packaged by Terraform)
+starter.py                    # S3 trigger entrypoint
+render.py                     # Template rendering logic
+invoke_bedrock.py             # Bedrock client + retries
+publish.py                    # Writes outputs to S3
+api.py                        # Optional API routes
 
-prompt_templates/       # Prompt template files
-prompts/                # Sample prompt configs
-validation-screenshots/ # Execution proof screenshots
-
+prompt_templates/               # Prompt templates
+prompts/                        # Sample prompt configs
+validation-screenshots/         # Execution proof screenshots
 
 Environments
 Beta
 
-Triggered by Pull Requests
+Deployed via Pull Requests
 
-Outputs written to beta/outputs/
+Outputs written to:
+beta/outputs/
 
 Prod
 
-Triggered by merges to main
+Deployed via merges to main
 
-Outputs written to prod/outputs/
+Outputs written to:
+prod/outputs/
+
+Environment Resolution
 
 Environment selection is derived from:
 
@@ -89,21 +96,18 @@ S3 object metadata (env=beta|prod)
 
 Fallback to DEFAULT_ENV
 
-Deploy
+Deploy (Terraform)
+Local Deployment
 
 From the infra/ directory:
 terraform init
 terraform apply
 
 Key Inputs
-
-env = beta | prod
-
-bucket_name
-
-bedrock_region
-
-bedrock_model_id
+env                = beta | prod
+bucket_name        = <environment-specific bucket>
+bedrock_region     = us-east-1
+bedrock_model_id   = <model-id>
 
 CI/CD
 PR → Beta
@@ -116,12 +120,24 @@ Merge → Prod
 
 Deploys infrastructure changes to prod
 
-Publishes final outputs
+Publishes final rendered outputs
 
-This enforces promotion discipline: only reviewed changes reach production.
+This enforces controlled promotion: only reviewed changes reach production.
+
+Validation Artifacts
+
+Recommended high-signal proof screenshots included in validation-screenshots/:
+
+GitHub Actions PR → Beta success
+
+GitHub Actions Merge → Prod success
+
+Step Functions execution graph
+
+S3 prod/outputs/ listing
+
+CloudWatch logs showing event-triggered execution
 
 Summary
 
-This project demonstrates production-ready Infrastructure as Code, event-driven serverless design, and disciplined environment promotion for AI-backed workloads on AWS.
-
-
+This project demonstrates production-grade Infrastructure as Code, event-driven serverless design, secure IAM practices, and disciplined environment promotion for AI-backed workloads on AWS.
