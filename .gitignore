@@ -1,11 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+
+# Terraform
 .terraform/
+*.tfstate
+*.tfstate.*
+.crash.log
 
-*.tfstate*
-
+# Outputs (generated)
 outputs/*.html
-
 outputs/*.md
 
-__pycache__/
+# macOS
+.DS_Store
+# --- Terraform ---
+**/.terraform/*
+**/*.tfstate
+**/*.tfstate.*
+infra/build/
 
+# --- OS ---
 .DS_Store
