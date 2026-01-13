@@ -99,8 +99,8 @@ Environment selection is derived from:
 Filename convention (beta-*.json, prod-*.json)
 
 S3 object metadata (env=beta|prod)
-
 Fallback to DEFAULT_ENV
+
 ---
 
 ## Deploy (Terraform)
@@ -136,6 +136,7 @@ Deploys infrastructure changes to prod
 Publishes final rendered outputs
 
 This enforces controlled promotion: only reviewed changes reach production.
+
 ---
 
 ## Validation Artifacts
@@ -151,6 +152,7 @@ Step Functions execution graph
 S3 prod/outputs/ listing
 
 CloudWatch logs showing event-triggered execution
+
 ---
 
 ## Summary
