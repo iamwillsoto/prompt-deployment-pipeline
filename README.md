@@ -1,8 +1,7 @@
 Prompt Deployment Pipeline (Beta → Prod)
-
 Terraform + Event-Driven Amazon Bedrock Rendering
 
-A Terraform-managed prompt deployment platform that converts JSON prompt configurations into rendered HTML/Markdown outputs using an event-driven AWS architecture. Prompt configs are uploaded to S3, processed by Lambda, optionally invoked through Amazon Bedrock, and published to environment-scoped prefixes (beta/ and prod/). CI/CD enforces strict PR → Beta and Merge → Prod promotion.
+A Terraform-managed prompt deployment platform that converts JSON prompt configurations into rendered HTML/Markdown outputs using an event-driven AWS architecture. Prompt configs are uploaded to Amazon S3, processed by AWS Lambda, optionally invoked through Amazon Bedrock, and published to environment-scoped prefixes (beta/ and prod/). CI/CD enforces strict PR → Beta and Merge → Prod promotion.
 
 Outcomes
 
@@ -49,6 +48,7 @@ Optional API
 API Gateway exposes list, preview, and regenerate endpoints.
 
 Repository Layout
+
 infra/                  # Terraform IaC
   main.tf
   variables.tf
@@ -66,6 +66,7 @@ lambdas/                # Lambda sources (packaged by Terraform)
 prompt_templates/       # Prompt template files
 prompts/                # Sample prompt configs
 validation-screenshots/ # Execution proof screenshots
+
 
 Environments
 Beta
@@ -90,11 +91,11 @@ Fallback to DEFAULT_ENV
 
 Deploy
 
-From infra/:
+From the infra/ directory:
 terraform init
 terraform apply
 
-Key inputs
+Key Inputs
 
 env = beta | prod
 
@@ -122,3 +123,5 @@ This enforces promotion discipline: only reviewed changes reach production.
 Summary
 
 This project demonstrates production-ready Infrastructure as Code, event-driven serverless design, and disciplined environment promotion for AI-backed workloads on AWS.
+
+
