@@ -1,38 +1,20 @@
 {
-  "Comment": "Prompt pipeline: render -> bedrock -> publish",
+  "Comment": "Pixel Prompts pipeline: render -> invoke bedrock -> publish",
   "StartAt": "Render",
   "States": {
     "Render": {
       "Type": "Task",
       "Resource": "${render_arn}",
-      "Retry": [{
-        "ErrorEquals": ["States.ALL"],
-        "IntervalSeconds": 2,
-        "MaxAttempts": 2,
-        "BackoffRate": 2.0
-      }],
       "Next": "InvokeBedrock"
     },
     "InvokeBedrock": {
       "Type": "Task",
       "Resource": "${invoke_arn}",
-      "Retry": [{
-        "ErrorEquals": ["States.ALL"],
-        "IntervalSeconds": 2,
-        "MaxAttempts": 3,
-        "BackoffRate": 2.0
-      }],
       "Next": "Publish"
     },
     "Publish": {
       "Type": "Task",
       "Resource": "${publish_arn}",
-      "Retry": [{
-        "ErrorEquals": ["States.ALL"],
-        "IntervalSeconds": 2,
-        "MaxAttempts": 2,
-        "BackoffRate": 2.0
-      }],
       "End": true
     }
   }
