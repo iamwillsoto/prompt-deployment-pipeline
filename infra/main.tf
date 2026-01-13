@@ -379,7 +379,7 @@ resource "aws_lambda_function" "starter" {
 # S3 -> Starter trigger
 ############################
 resource "aws_lambda_permission" "allow_s3_invoke_starter" {
-  statement_id  = "AllowExecutionFromS3"
+  statement_id  = "AllowExecutionFromS3-${var.env}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.starter.function_name
   principal     = "s3.amazonaws.com"
